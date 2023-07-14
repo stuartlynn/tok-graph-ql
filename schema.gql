@@ -359,6 +359,8 @@ enum OccupationTypes {
   BLACKSMITH
   ARTIST__PHOTOGRAPHIC
   TURNER
+  MAKER
+  SELLER
 }
 
 enum FreedMode {
@@ -380,6 +382,7 @@ enum Nationalities {
   GERMAN
   DUTCH
   SWEDISH
+  BRITISH_SUBJECT
 }
 
 enum Religions {
@@ -415,6 +418,7 @@ enum MembershipType {
   PRESIDENT
   ASSISTANT
   WARDEN
+  CLERK_HOUSEKEEPER
 }
 
 enum SourceTypes {
@@ -2070,6 +2074,8 @@ enum ObjectTypes {
   LACE
   TEA_URN
   CONSUMABLE
+  PENCIL
+  ASSAY
 }
 
 enum RoleTypes {
@@ -2106,6 +2112,11 @@ enum OrganisationType {
   GOVERNMENT_BODY
   OVERSEAS_TRADING_COMPANY
   TRAINING_INSTITUTION
+  PARTNERSHIP
+  LIMITED_COMPANY
+  LIVERY_COMPANY
+  PRISON
+  TRAINING_ORGANISATION
 }
 
 enum DateType {
@@ -2161,26 +2172,28 @@ union ExhibitionOrOrganisationOrPerson = Exhibition | Organisation | Person
 models
 """
 type Takeover {
-  TookOver: Organisation! @relationship(type: "TookOver", direction: OUT)
-  TakenOverBy: OrganisationOrPerson!
+  ResourceId: String @unique
+  TookOver: Organisation @relationship(type: "TookOver", direction: OUT)
+  TakenOverBy: OrganisationOrPerson
     @relationship(type: "TakenOverBy", direction: OUT)
   TakeoverDateConfidenceType: ConfidenceType
   TakeoverDateConfidenceNote: String
   TakeoverDateConfidenceProbabilityValue: Float
   TakeoverDateConfidenceAssessmentAdditionalNotes: String
   TakeoverDateAdditionalNotes: String
-  TakeoverDateValue: DateValue
+  TakeoverDateValue: Date
   TakeoverDateType: DateType
   TakeoverAdditionalNotes: String
 }
 
 type Survey {
+  ResourceId: String @unique
   SurveyEndDateConfidenceType: ConfidenceType
   SurveyEndDateConfidenceNote: String
   SurveyEndDateConfidenceProbabilityValue: Float
   SurveyEndDateConfidenceAssessmentAdditionalNotes: String
   SurveyEndDateAdditionalNotes: String
-  SurveyEndDateValue: DateValue
+  SurveyEndDateValue: Date
   SurveyEndDateType: DateType
   PlacesSurveyed: [Place!]!
     @relationship(type: "PlacesSurveyed", direction: OUT)
@@ -2193,37 +2206,39 @@ type Survey {
   SurveyStartDateConfidenceProbabilityValue: Float
   SurveyStartDateConfidenceAssessmentAdditionalNotes: String
   SurveyStartDateAdditionalNotes: String
-  SurveyStartDateValue: DateValue
+  SurveyStartDateValue: Date
   SurveyStartDateType: DateType
 }
 
 type Supplying {
+  ResourceId: String @unique
   SupplyingStartDateConfidenceType: ConfidenceType
   SupplyingStartDateConfidenceNote: String
   SupplyingStartDateConfidenceProbabilityValue: Float
   SupplyingStartDateConfidenceAssessmentAdditionalNotes: String
   SupplyingStartDateAdditionalNotes: String
-  SupplyingStartDateValue: DateValue
+  SupplyingStartDateValue: Date
   SupplyingStartDateType: DateType
   SupplyingEndDateConfidenceType: ConfidenceType
   SupplyingEndDateConfidenceNote: String
   SupplyingEndDateConfidenceProbabilityValue: Float
   SupplyingEndDateConfidenceAssessmentAdditionalNotes: String
   SupplyingEndDateAdditionalNotes: String
-  SupplyingEndDateValue: DateValue
+  SupplyingEndDateValue: Date
   SupplyingEndDateType: DateType
-  SuppliedBy: OrganisationOrPerson!
+  SuppliedBy: OrganisationOrPerson
     @relationship(type: "SuppliedBy", direction: OUT)
-  SuppliedTo: OrganisationOrPerson!
+  SuppliedTo: OrganisationOrPerson
     @relationship(type: "SuppliedTo", direction: OUT)
   SuppliedObjectsofType: [ObjectTypes!]
   SuppliedSpecificObjects: [Object!]!
     @relationship(type: "SuppliedSpecificObjects", direction: OUT)
-  SuppliedObjectsProducedBy: OrganisationOrPerson!
+  SuppliedObjectsProducedBy: OrganisationOrPerson
     @relationship(type: "SuppliedObjectsProducedBy", direction: OUT)
 }
 
 type Source {
+  ResourceId: String @unique
   Title: String
   ResearchNote: String
   CreationDateConfidenceType: ConfidenceType
@@ -2231,25 +2246,25 @@ type Source {
   CreationDateConfidenceProbabilityValue: Float
   CreationDateConfidenceAssessmentAdditionalNotes: String
   CreationDateAdditionalNotes: String
-  CreationDateValue: DateValue
+  CreationDateValue: Date
   CreationDateType: DateType
   PublicationEndDateConfidenceType: ConfidenceType
   PublicationEndDateConfidenceNote: String
   PublicationEndDateConfidenceProbabilityValue: Float
   PublicationEndDateConfidenceAssessmentAdditionalNotes: String
   PublicationEndDateAdditionalNotes: String
-  PublicationEndDateValue: DateValue
+  PublicationEndDateValue: Date
   PublicationEndDateType: DateType
   PublicationSingleDateConfidenceType: ConfidenceType
   PublicationSingleDateConfidenceNote: String
   PublicationSingleDateConfidenceProbabilityValue: Float
   PublicationSingleDateConfidenceAssessmentAdditionalNotes: String
   PublicationSingleDateAdditionalNotes: String
-  PublicationSingleDateValue: DateValue
+  PublicationSingleDateValue: Date
   PublicationSingleDateType: DateType
-  PlaceofPublication: Place!
+  PlaceofPublication: Place
     @relationship(type: "PlaceofPublication", direction: OUT)
-  HeldBy: OrganisationOrPerson! @relationship(type: "HeldBy", direction: OUT)
+  HeldBy: OrganisationOrPerson @relationship(type: "HeldBy", direction: OUT)
   CatalogueRecordURL: String
   HasCatalogueIdentifier: String
   SourceType: SourceTypes
@@ -2257,8 +2272,8 @@ type Source {
   Creator: [OrganisationOrPerson!]!
     @relationship(type: "Creator", direction: OUT)
   PageRange: String
-  HasPart: ObjectOrSource! @relationship(type: "HasPart", direction: OUT)
-  Publisher: OrganisationOrPerson!
+  HasPart: ObjectOrSource @relationship(type: "HasPart", direction: OUT)
+  Publisher: OrganisationOrPerson
     @relationship(type: "Publisher", direction: OUT)
   Editor: [OrganisationOrPerson!]! @relationship(type: "Editor", direction: OUT)
   Addressee: [OrganisationOrPerson!]!
@@ -2271,34 +2286,36 @@ type Source {
   PublicationStartDateConfidenceProbabilityValue: Float
   PublicationStartDateConfidenceAssessmentAdditionalNotes: String
   PublicationStartDateAdditionalNotes: String
-  PublicationStartDateValue: DateValue
+  PublicationStartDateValue: Date
   PublicationStartDateType: DateType
   AbbreviatedCitation: String
 }
 
 type RoyalAppointment {
+  ResourceId: String @unique
   RoyalAppointmentEndDateConfidenceType: ConfidenceType
   RoyalAppointmentEndDateConfidenceNote: String
   RoyalAppointmentEndDateConfidenceProbabilityValue: Float
   RoyalAppointmentEndDateConfidenceAssessmentAdditionalNotes: String
   RoyalAppointmentEndDateAdditionalNotes: String
-  RoyalAppointmentEndDateValue: DateValue
+  RoyalAppointmentEndDateValue: Date
   RoyalAppointmentEndDateType: DateType
   RoyalAppointmentAdditionalNotes: String
-  RoyalAppointmentMakerAppointed: OrganisationOrPerson!
+  RoyalAppointmentMakerAppointed: OrganisationOrPerson
     @relationship(type: "RoyalAppointmentMakerAppointed", direction: OUT)
-  RoyalAppointmentMadeBy: OrganisationOrPerson!
+  RoyalAppointmentMadeBy: OrganisationOrPerson
     @relationship(type: "RoyalAppointmentMadeBy", direction: OUT)
   RoyalAppointmentStartDateConfidenceType: ConfidenceType
   RoyalAppointmentStartDateConfidenceNote: String
   RoyalAppointmentStartDateConfidenceProbabilityValue: Float
   RoyalAppointmentStartDateConfidenceAssessmentAdditionalNotes: String
   RoyalAppointmentStartDateAdditionalNotes: String
-  RoyalAppointmentStartDateValue: DateValue
+  RoyalAppointmentStartDateValue: Date
   RoyalAppointmentStartDateType: DateType
 }
 
 type Producing {
+  ResourceId: String @unique
   ProducedSpecificObjects: [Object!]!
     @relationship(type: "ProducedSpecificObjects", direction: OUT)
   ProducedObjectsBy: [OrganisationOrPerson!]!
@@ -2312,19 +2329,20 @@ type Producing {
   ProductionStartDateConfidenceProbabilityValue: Float
   ProductionStartDateConfidenceAssessmentAdditionalNotes: String
   ProductionStartDateAdditionalNotes: String
-  ProductionStartDateValue: DateValue
+  ProductionStartDateValue: Date
   ProductionStartDateType: DateType
   ProductionEndDateConfidenceType: ConfidenceType
   ProductionEndDateConfidenceNote: String
   ProductionEndDateConfidenceProbabilityValue: Float
   ProductionEndDateConfidenceAssessmentAdditionalNotes: String
   ProductionEndDateAdditionalNotes: String
-  ProductionEndDateValue: DateValue
+  ProductionEndDateValue: Date
   ProductionEndDateType: DateType
   ProducedObjectsofTypes: [ObjectTypes!]
 }
 
 type Place {
+  ResourceId: String @unique
   PlaceName: String
   PlaceGeonamesIdentifier: String
   PlaceGettyIdentifier: String
@@ -2335,11 +2353,12 @@ type Place {
 }
 
 type Person {
+  ResourceId: String @unique
   FlourishingStartDateAdditionalNotes: String
   FlourishingStartDateType: DateType
   FlourishingEndDateAdditionalNotes: String
-  FlourishingEndDateValue: DateValue
-  FlourishingStartDateValue: DateValue
+  FlourishingEndDateValue: Date
+  FlourishingStartDateValue: Date
   FlourishingStartDateConfidenceType: ConfidenceType
   FlourishingStartDateConfidenceNote: String
   FlourishingStartDateConfidenceProbabilityValue: Float
@@ -2356,10 +2375,10 @@ type Person {
   DeathDateConfidenceProbabilityValue: Float
   DeathDateConfidenceAssessmentAdditionalNotes: String
   DeathDateAdditionalNotes: String
-  DeathDateValue: DateValue
+  DeathDateValue: Date
   DeathDateType: DateType
   FriendOf: [Person!]! @relationship(type: "FriendOf", direction: OUT)
-  PlaceofBaptism: Place! @relationship(type: "PlaceofBaptism", direction: OUT)
+  PlaceofBaptism: Place @relationship(type: "PlaceofBaptism", direction: OUT)
   AssociatedPerson: [Person!]!
     @relationship(type: "AssociatedPerson", direction: OUT)
   RetirementDateConfidenceType: ConfidenceType
@@ -2367,7 +2386,7 @@ type Person {
   RetirementDateConfidenceProbabilityValue: Float
   RetirementDateConfidenceAssessmentAdditionalNotes: String
   RetirementDateAdditionalNotes: String
-  RetirementDateValue: DateValue
+  RetirementDateValue: Date
   RetirementDateType: DateType
   BiographicalDescription: String
   AssociatedOrganisation: [Organisation!]!
@@ -2379,9 +2398,9 @@ type Person {
   NaturalisationDateConfidenceProbabilityValue: Float
   NaturalisationDateConfidenceAssessmentAdditionalNotes: String
   NaturalisationDateAdditionalNotes: String
-  NaturalisationDateValue: DateValue
+  NaturalisationDateValue: Date
   NaturalisationDateType: DateType
-  IncarceratingInstitution: Organisation!
+  IncarceratingInstitution: Organisation
     @relationship(type: "IncarceratingInstitution", direction: OUT)
   Nationality: Nationalities
   SequestrationDateConfidenceType: ConfidenceType
@@ -2389,7 +2408,7 @@ type Person {
   SequestrationDateConfidenceProbabilityValue: Float
   SequestrationDateConfidenceAssessmentAdditionalNotes: String
   SequestrationDateAdditionalNotes: String
-  SequestrationDateValue: DateValue
+  SequestrationDateValue: Date
   SequestrationDateType: DateType
   SeeAlso: [OrganisationOrPerson!]!
     @relationship(type: "SeeAlso", direction: OUT)
@@ -2398,15 +2417,15 @@ type Person {
   BirthDateConfidenceProbabilityValue: Float
   BirthDateConfidenceAssessmentAdditionalNotes: String
   BirthDateAdditionalNotes: String
-  BirthDateValue: DateValue
+  BirthDateValue: Date
   BirthDateType: DateType
   NieceNephew: [Person!]! @relationship(type: "NieceNephew", direction: OUT)
   NationalityAssessmentNote: String
   WorkingStartDateAdditionalNotes: String
   WorkingStartDateType: DateType
   WorkingEndDateAdditionalNotes: String
-  WorkingEndDateValue: DateValue
-  WorkingStartDateValue: DateValue
+  WorkingEndDateValue: Date
+  WorkingStartDateValue: Date
   WorkingStartDateConfidenceType: ConfidenceType
   WorkingStartDateConfidenceNote: String
   WorkingStartDateConfidenceProbabilityValue: Float
@@ -2421,8 +2440,8 @@ type Person {
   OccupiedWorkhouseStartDateAdditionalNotes: String
   OccupiedWorkhouseStartDateType: DateType
   OccupiedWorkhouseEndDateAdditionalNotes: String
-  OccupiedWorkhouseEndDateValue: DateValue
-  OccupiedWorkhouseStartDateValue: DateValue
+  OccupiedWorkhouseEndDateValue: Date
+  OccupiedWorkhouseStartDateValue: Date
   OccupiedWorkhouseStartDateConfidenceType: ConfidenceType
   OccupiedWorkhouseStartDateConfidenceNote: String
   OccupiedWorkhouseStartDateConfidenceProbabilityValue: Float
@@ -2438,17 +2457,17 @@ type Person {
   BankruptcyDateConfidenceProbabilityValue: Float
   BankruptcyDateConfidenceAssessmentAdditionalNotes: String
   BankruptcyDateAdditionalNotes: String
-  BankruptcyDateValue: DateValue
+  BankruptcyDateValue: Date
   BankruptcyDateType: DateType
   Sibling: [Person!]! @relationship(type: "Sibling", direction: OUT)
   SimonID: Float
   Parentinlaw: [Person!]! @relationship(type: "Parentinlaw", direction: OUT)
-  PlaceofBirth: Place! @relationship(type: "PlaceofBirth", direction: OUT)
+  PlaceofBirth: Place @relationship(type: "PlaceofBirth", direction: OUT)
   IncarcerationStartDateAdditionalNotes: String
   IncarcerationStartDateType: DateType
   IncarcerationEndDateAdditionalNotes: String
-  IncarcerationEndDateValue: DateValue
-  IncarcerationStartDateValue: DateValue
+  IncarcerationEndDateValue: Date
+  IncarcerationStartDateValue: Date
   IncarcerationStartDateConfidenceType: ConfidenceType
   IncarcerationStartDateConfidenceNote: String
   IncarcerationStartDateConfidenceProbabilityValue: Float
@@ -2468,23 +2487,24 @@ type Person {
   BurialDateConfidenceProbabilityValue: Float
   BurialDateConfidenceAssessmentAdditionalNotes: String
   BurialDateAdditionalNotes: String
-  BurialDateValue: DateValue
+  BurialDateValue: Date
   BurialDateType: DateType
   BaptismDateConfidenceType: ConfidenceType
   BaptismDateConfidenceNote: String
   BaptismDateConfidenceProbabilityValue: Float
   BaptismDateConfidenceAssessmentAdditionalNotes: String
   BaptismDateAdditionalNotes: String
-  BaptismDateValue: DateValue
+  BaptismDateValue: Date
   BaptismDateType: DateType
   AlternativeSurname: String
-  DocumentedIn: Source! @relationship(type: "DocumentedIn", direction: OUT)
+  DocumentedIn: Source @relationship(type: "DocumentedIn", direction: OUT)
 }
 
 type Patenting {
+  ResourceId: String @unique
   PatentedObjectsofType: ObjectTypes
   AdditionalNotes: String
-  PatentRecord: Source! @relationship(type: "PatentRecord", direction: OUT)
+  PatentRecord: Source @relationship(type: "PatentRecord", direction: OUT)
   PatentedBy: [OrganisationOrPerson!]!
     @relationship(type: "PatentedBy", direction: OUT)
   PatentDescription: String
@@ -2493,30 +2513,32 @@ type Patenting {
   PatentDateConfidenceProbabilityValue: Float
   PatentDateConfidenceAssessmentAdditionalNotes: String
   PatentDateAdditionalNotes: String
-  PatentDateValue: DateValue
+  PatentDateValue: Date
   PatentDateType: DateType
 }
 
 type Ownership {
+  ResourceId: String @unique
   OwnershipStartDateConfidenceType: ConfidenceType
   OwnershipStartDateConfidenceNote: String
   OwnershipStartDateConfidenceProbabilityValue: Float
   OwnershipStartDateConfidenceAssessmentAdditionalNotes: String
   OwnershipStartDateAdditionalNotes: String
-  OwnershipStartDateValue: DateValue
+  OwnershipStartDateValue: Date
   OwnershipStartDateType: DateType
   OwnershipEndDateConfidenceType: ConfidenceType
   OwnershipEndDateConfidenceNote: String
   OwnershipEndDateConfidenceProbabilityValue: Float
   OwnershipEndDateConfidenceAssessmentAdditionalNotes: String
   OwnershipEndDateAdditionalNotes: String
-  OwnershipEndDateValue: DateValue
+  OwnershipEndDateValue: Date
   OwnershipEndDateType: DateType
-  Owner: OrganisationOrPerson! @relationship(type: "Owner", direction: OUT)
-  Owned: Organisation! @relationship(type: "Owned", direction: OUT)
+  Owner: OrganisationOrPerson @relationship(type: "Owner", direction: OUT)
+  Owned: Organisation @relationship(type: "Owned", direction: OUT)
 }
 
 type Organisation {
+  ResourceId: String @unique
   DissolutionAssociatedLegalProcess: [LegalProcess!]!
     @relationship(type: "DissolutionAssociatedLegalProcess", direction: OUT)
   FormationDateConfidenceType: ConfidenceType
@@ -2524,7 +2546,7 @@ type Organisation {
   FormationDateConfidenceProbabilityValue: Float
   FormationDateConfidenceAssessmentAdditionalNotes: String
   FormationDateAdditionalNotes: String
-  FormationDateValue: DateValue
+  FormationDateValue: Date
   FormationDateType: DateType
   AssociatedOrganisation: [Organisation!]!
     @relationship(type: "AssociatedOrganisation", direction: OUT)
@@ -2534,7 +2556,7 @@ type Organisation {
   DissolutionDateConfidenceProbabilityValue: Float
   DissolutionDateConfidenceAssessmentAdditionalNotes: String
   DissolutionDateAdditionalNotes: String
-  DissolutionDateValue: DateValue
+  DissolutionDateValue: Date
   DissolutionDateType: DateType
   AlternativeOrganisationName: String
   OrganisationDocumentedinSource: [Source!]!
@@ -2549,44 +2571,47 @@ type Organisation {
 }
 
 type Object {
+  ResourceId: String @unique
   MadeFrom: MaterialTypes
   DocumentedIn: [Source!]! @relationship(type: "DocumentedIn", direction: OUT)
   HasDescription: String
   HasCatalogueIdentifier: String
   ObjectType: ObjectTypes
-  HeldBy: OrganisationOrPerson! @relationship(type: "HeldBy", direction: OUT)
+  HeldBy: OrganisationOrPerson @relationship(type: "HeldBy", direction: OUT)
   CatalogueRecordURL: String
 }
 
 type Membership {
+  ResourceId: String @unique
   MembershipEndDateConfidenceType: ConfidenceType
   MembershipEndDateConfidenceNote: String
   MembershipEndDateConfidenceProbabilityValue: Float
   MembershipEndDateConfidenceAssessmentAdditionalNotes: String
   MembershipEndDateAdditionalNotes: String
-  MembershipEndDateValue: DateValue
+  MembershipEndDateValue: Date
   MembershipEndDateType: DateType
   MembershipType: MembershipType
   MembershipAdditionalNotes: String
-  Member: Person! @relationship(type: "Member", direction: OUT)
-  MemberofOrganisation: Organisation!
+  Member: Person @relationship(type: "Member", direction: OUT)
+  MemberofOrganisation: Organisation
     @relationship(type: "MemberofOrganisation", direction: OUT)
   MembershipStartDateConfidenceType: ConfidenceType
   MembershipStartDateConfidenceNote: String
   MembershipStartDateConfidenceProbabilityValue: Float
   MembershipStartDateConfidenceAssessmentAdditionalNotes: String
   MembershipStartDateAdditionalNotes: String
-  MembershipStartDateValue: DateValue
+  MembershipStartDateValue: Date
   MembershipStartDateType: DateType
 }
 
 type Marriage {
+  ResourceId: String @unique
   MarriageEndDateConfidenceType: ConfidenceType
   MarriageEndDateConfidenceNote: String
   MarriageEndDateConfidenceProbabilityValue: Float
   MarriageEndDateConfidenceAssessmentAdditionalNotes: String
   MarriageEndDateAdditionalNotes: String
-  MarriageEndDateValue: DateValue
+  MarriageEndDateValue: Date
   MarriageEndDateType: DateType
   Spouse: [Person!]! @relationship(type: "Spouse", direction: OUT)
   MarriageStartDateConfidenceType: ConfidenceType
@@ -2594,19 +2619,20 @@ type Marriage {
   MarriageStartDateConfidenceProbabilityValue: Float
   MarriageStartDateConfidenceAssessmentAdditionalNotes: String
   MarriageStartDateAdditionalNotes: String
-  MarriageStartDateValue: DateValue
+  MarriageStartDateValue: Date
   MarriageStartDateType: DateType
 }
 
 type LegalProcess {
-  Suer: OrganisationOrPerson! @relationship(type: "Suer", direction: OUT)
-  Sued: OrganisationOrPerson! @relationship(type: "Sued", direction: OUT)
+  ResourceId: String @unique
+  Suer: OrganisationOrPerson @relationship(type: "Suer", direction: OUT)
+  Sued: OrganisationOrPerson @relationship(type: "Sued", direction: OUT)
   LegalProcessStartDateConfidenceType: ConfidenceType
   LegalProcessStartDateConfidenceNote: String
   LegalProcessStartDateConfidenceProbabilityValue: Float
   LegalProcessStartDateConfidenceAssessmentAdditionalNotes: String
   LegalProcessStartDateAdditionalNotes: String
-  LegalProcessStartDateValue: DateValue
+  LegalProcessStartDateValue: Date
   LegalProcessStartDateType: DateType
   LegalProcessType: TypesofLegalProcess
   LegalProcessEndDateConfidenceType: ConfidenceType
@@ -2614,66 +2640,68 @@ type LegalProcess {
   LegalProcessEndDateConfidenceProbabilityValue: Float
   LegalProcessEndDateConfidenceAssessmentAdditionalNotes: String
   LegalProcessEndDateAdditionalNotes: String
-  LegalProcessEndDateValue: DateValue
+  LegalProcessEndDateValue: Date
   LegalProcessEndDateType: DateType
   Petitioner: [OrganisationOrPerson!]!
     @relationship(type: "Petitioner", direction: OUT)
-  Prosecutor: OrganisationOrPerson!
+  Prosecutor: OrganisationOrPerson
     @relationship(type: "Prosecutor", direction: OUT)
   SentenceType: SentenceType
-  Defendant: OrganisationOrPerson!
+  Defendant: OrganisationOrPerson
     @relationship(type: "Defendant", direction: OUT)
   CaseDescription: String
   LegalProcessName: String
 }
 
 type Inventing {
+  ResourceId: String @unique
   InventedObjectType: ObjectTypes
   InventingAdditionalNotes: String
-  Inventor: OrganisationOrPerson!
-    @relationship(type: "Inventor", direction: OUT)
+  Inventor: OrganisationOrPerson @relationship(type: "Inventor", direction: OUT)
   InventingType: InventionTypes
   InventingStartDateConfidenceType: ConfidenceType
   InventingStartDateConfidenceNote: String
   InventingStartDateConfidenceProbabilityValue: Float
   InventingStartDateConfidenceAssessmentAdditionalNotes: String
   InventingStartDateAdditionalNotes: String
-  InventingStartDateValue: DateValue
+  InventingStartDateValue: Date
   InventingStartDateType: DateType
   InventingEndDateConfidenceType: ConfidenceType
   InventingEndDateConfidenceNote: String
   InventingEndDateConfidenceProbabilityValue: Float
   InventingEndDateConfidenceAssessmentAdditionalNotes: String
   InventingEndDateAdditionalNotes: String
-  InventingEndDateValue: DateValue
+  InventingEndDateValue: Date
   InventingEndDateType: DateType
 }
 
 type Exporting {
-  ExportedTo: OrganisationOrPerson!
+  ResourceId: String @unique
+  ExportedTo: OrganisationOrPerson
     @relationship(type: "ExportedTo", direction: OUT)
   ExportingStartDateConfidenceType: ConfidenceType
   ExportingStartDateConfidenceNote: String
   ExportingStartDateConfidenceProbabilityValue: Float
   ExportingStartDateConfidenceAssessmentAdditionalNotes: String
   ExportingStartDateAdditionalNotes: String
-  ExportingStartDateValue: DateValue
+  ExportingStartDateValue: Date
   ExportingStartDateType: DateType
   ExportingEndDateConfidenceType: ConfidenceType
   ExportingEndDateConfidenceNote: String
   ExportingEndDateConfidenceProbabilityValue: Float
   ExportingEndDateConfidenceAssessmentAdditionalNotes: String
   ExportingEndDateAdditionalNotes: String
-  ExportingEndDateValue: DateValue
+  ExportingEndDateValue: Date
   ExportingEndDateType: DateType
   ExportedObjectsofType: [ObjectTypes!]
   ExxportedSpecificObjects: [Object!]!
     @relationship(type: "ExxportedSpecificObjects", direction: OUT)
-  ExportedBy: OrganisationOrPerson!
+  ExportedBy: OrganisationOrPerson
     @relationship(type: "ExportedBy", direction: OUT)
 }
 
 type Expedition {
+  ResourceId: String @unique
   PlacesVisitedonExpedition: [Place!]!
     @relationship(type: "PlacesVisitedonExpedition", direction: OUT)
   ExpeditionCarriedOutBy: [OrganisationOrPerson!]!
@@ -2685,24 +2713,25 @@ type Expedition {
   ExpeditionStartDateConfidenceProbabilityValue: Float
   ExpeditionStartDateConfidenceAssessmentAdditionalNotes: String
   ExpeditionStartDateAdditionalNotes: String
-  ExpeditionStartDateValue: DateValue
+  ExpeditionStartDateValue: Date
   ExpeditionStartDateType: DateType
   ExhibitionEndDateConfidenceType: ConfidenceType
   ExhibitionEndDateConfidenceNote: String
   ExhibitionEndDateConfidenceProbabilityValue: Float
   ExhibitionEndDateConfidenceAssessmentAdditionalNotes: String
   ExhibitionEndDateAdditionalNotes: String
-  ExhibitionEndDateValue: DateValue
+  ExhibitionEndDateValue: Date
   ExhibitionEndDateType: DateType
 }
 
 type Exhibition {
+  ResourceId: String @unique
   ExhibitionEndDateConfidenceType: ConfidenceType
   ExhibitionEndDateConfidenceNote: String
   ExhibitionEndDateConfidenceProbabilityValue: Float
   ExhibitionEndDateConfidenceAssessmentAdditionalNotes: String
   ExhibitionEndDateAdditionalNotes: String
-  ExhibitionEndDateValue: DateValue
+  ExhibitionEndDateValue: Date
   ExhibitionEndDateType: DateType
   ExhibitedWorkBy: [OrganisationOrPerson!]!
     @relationship(type: "ExhibitedWorkBy", direction: OUT)
@@ -2715,60 +2744,62 @@ type Exhibition {
   ExhibitionStartDateConfidenceProbabilityValue: Float
   ExhibitionStartDateConfidenceAssessmentAdditionalNotes: String
   ExhibitionStartDateAdditionalNotes: String
-  ExhibitionStartDateValue: DateValue
+  ExhibitionStartDateValue: Date
   ExhibitionStartDateType: DateType
 }
 
 type Employment {
+  ResourceId: String @unique
   EmploymentStartDateConfidenceType: ConfidenceType
   EmploymentStartDateConfidenceNote: String
   EmploymentStartDateConfidenceProbabilityValue: Float
   EmploymentStartDateConfidenceAssessmentAdditionalNotes: String
   EmploymentStartDateAdditionalNotes: String
-  EmploymentStartDateValue: DateValue
+  EmploymentStartDateValue: Date
   EmploymentStartDateType: DateType
   EmploymentEndDateConfidenceType: ConfidenceType
   EmploymentEndDateConfidenceNote: String
   EmploymentEndDateConfidenceProbabilityValue: Float
   EmploymentEndDateConfidenceAssessmentAdditionalNotes: String
   EmploymentEndDateAdditionalNotes: String
-  EmploymentEndDateValue: DateValue
+  EmploymentEndDateValue: Date
   EmploymentEndDateType: DateType
-  Employee: Person! @relationship(type: "Employee", direction: OUT)
-  Employer: OrganisationOrPerson!
-    @relationship(type: "Employer", direction: OUT)
+  Employee: Person @relationship(type: "Employee", direction: OUT)
+  Employer: OrganisationOrPerson @relationship(type: "Employer", direction: OUT)
 }
 
 type Education {
-  EducatedPerson: Person! @relationship(type: "EducatedPerson", direction: OUT)
-  Educator: Person! @relationship(type: "Educator", direction: OUT)
-  EducationProvider: Organisation!
+  ResourceId: String @unique
+  EducatedPerson: Person @relationship(type: "EducatedPerson", direction: OUT)
+  Educator: Person @relationship(type: "Educator", direction: OUT)
+  EducationProvider: Organisation
     @relationship(type: "EducationProvider", direction: OUT)
   EducationStartDateConfidenceType: ConfidenceType
   EducationStartDateConfidenceNote: String
   EducationStartDateConfidenceProbabilityValue: Float
   EducationStartDateConfidenceAssessmentAdditionalNotes: String
   EducationStartDateAdditionalNotes: String
-  EducationStartDateValue: DateValue
+  EducationStartDateValue: Date
   EducationStartDateType: DateType
   EducationEndDateConfidenceType: ConfidenceType
   EducationEndDateConfidenceNote: String
   EducationEndDateConfidenceProbabilityValue: Float
   EducationEndDateConfidenceAssessmentAdditionalNotes: String
   EducationEndDateAdditionalNotes: String
-  EducationEndDateValue: DateValue
+  EducationEndDateValue: Date
   EducationEndDateType: DateType
   EducatorRoleType: EducatorRoleTypes
   SubjectArea: [SubjectAreas!]
 }
 
 type ChronometerTrial {
+  ResourceId: String @unique
   ChronometerTrialStartDateConfidenceType: ConfidenceType
   ChronometerTrialStartDateConfidenceNote: String
   ChronometerTrialStartDateConfidenceProbabilityValue: Float
   ChronometerTrialStartDateConfidenceAssessmentAdditionalNotes: String
   ChronometerTrialStartDateAdditionalNotes: String
-  ChronometerTrialStartDateValue: DateValue
+  ChronometerTrialStartDateValue: Date
   ChronometerTrialStartDateType: DateType
   ChronometerTrialName: String
   ChronometerTrialEndDateConfidenceType: ConfidenceType
@@ -2776,72 +2807,74 @@ type ChronometerTrial {
   ChronometerTrialEndDateConfidenceProbabilityValue: Float
   ChronometerTrialEndDateConfidenceAssessmentAdditionalNotes: String
   ChronometerTrialEndDateAdditionalNotes: String
-  ChronometerTrialEndDateValue: DateValue
+  ChronometerTrialEndDateValue: Date
   ChronometerTrialEndDateType: DateType
-  TrialledChronometer: Object!
+  TrialledChronometer: Object
     @relationship(type: "TrialledChronometer", direction: OUT)
-  ChronometerTrialTookPlaceAt: Place!
+  ChronometerTrialTookPlaceAt: Place
     @relationship(type: "ChronometerTrialTookPlaceAt", direction: OUT)
-  ChronometerTrialOccurredonExpedition: Expedition!
+  ChronometerTrialOccurredonExpedition: Expedition
     @relationship(type: "ChronometerTrialOccurredonExpedition", direction: OUT)
 }
 
 type BusinessAppointment {
+  ResourceId: String @unique
   BusinessAppointmentEndDateConfidenceType: ConfidenceType
   BusinessAppointmentEndDateConfidenceNote: String
   BusinessAppointmentEndDateConfidenceProbabilityValue: Float
   BusinessAppointmentEndDateConfidenceAssessmentAdditionalNotes: String
   BusinessAppointmentEndDateAdditionalNotes: String
-  BusinessAppointmentEndDateValue: DateValue
+  BusinessAppointmentEndDateValue: Date
   BusinessAppointmentEndDateType: DateType
   BusinessAppointmentAdditionalNotes: String
-  BusinessAppointmentMakerAppointed: OrganisationOrPerson!
+  BusinessAppointmentMakerAppointed: OrganisationOrPerson
     @relationship(type: "BusinessAppointmentMakerAppointed", direction: OUT)
-  BusinessAppointmentMadeBy: OrganisationOrPerson!
+  BusinessAppointmentMadeBy: OrganisationOrPerson
     @relationship(type: "BusinessAppointmentMadeBy", direction: OUT)
   BusinessAppointmentStartDateConfidenceType: ConfidenceType
   BusinessAppointmentStartDateConfidenceNote: String
   BusinessAppointmentStartDateConfidenceProbabilityValue: Float
   BusinessAppointmentStartDateConfidenceAssessmentAdditionalNotes: String
   BusinessAppointmentStartDateAdditionalNotes: String
-  BusinessAppointmentStartDateValue: DateValue
+  BusinessAppointmentStartDateValue: Date
   BusinessAppointmentStartDateType: DateType
 }
 
 type Award {
-  AwardedBy: ExhibitionOrOrganisationOrPerson!
+  ResourceId: String @unique
+  AwardedBy: ExhibitionOrOrganisationOrPerson
     @relationship(type: "AwardedBy", direction: OUT)
   AwardName: String
-  AwardedTo: OrganisationOrPerson!
+  AwardedTo: OrganisationOrPerson
     @relationship(type: "AwardedTo", direction: OUT)
-  AwardedFor: ChronometerTrial!
-    @relationship(type: "AwardedFor", direction: OUT)
+  AwardedFor: ChronometerTrial @relationship(type: "AwardedFor", direction: OUT)
   AwardType: AwardTypes
   AwardDateConfidenceType: ConfidenceType
   AwardDateConfidenceNote: String
   AwardDateConfidenceProbabilityValue: Float
   AwardDateConfidenceAssessmentAdditionalNotes: String
   AwardDateAdditionalNotes: String
-  AwardDateValue: DateValue
+  AwardDateValue: Date
   AwardDateType: DateType
 }
 
 type AtAddress {
+  ResourceId: String @unique
   AtAddressEndDateConfidenceType: ConfidenceType
   AtAddressEndDateConfidenceNote: String
   AtAddressEndDateConfidenceProbabilityValue: Float
   AtAddressEndDateConfidenceAssessmentAdditionalNotes: String
   AtAddressEndDateAdditionalNotes: String
-  AtAddressEndDateValue: DateValue
+  AtAddressEndDateValue: Date
   AtAddressEndDateType: DateType
-  OccupiedAddress: Address!
+  OccupiedAddress: Address
     @relationship(type: "OccupiedAddress", direction: OUT)
   AtAddressStartDateConfidenceType: ConfidenceType
   AtAddressStartDateConfidenceNote: String
   AtAddressStartDateConfidenceProbabilityValue: Float
   AtAddressStartDateConfidenceAssessmentAdditionalNotes: String
   AtAddressStartDateAdditionalNotes: String
-  AtAddressStartDateValue: DateValue
+  AtAddressStartDateValue: Date
   AtAddressStartDateType: DateType
   AddressFunction: [AddressFunction!]
   InvolvedOccupants: [OrganisationOrPerson!]!
@@ -2850,56 +2883,58 @@ type AtAddress {
 }
 
 type Apprenticeship {
-  Master: Person! @relationship(type: "Master", direction: OUT)
-  ApprenticeshipInvolvedGuild: Organisation!
+  ResourceId: String @unique
+  Master: Person @relationship(type: "Master", direction: OUT)
+  ApprenticeshipInvolvedGuild: Organisation
     @relationship(type: "ApprenticeshipInvolvedGuild", direction: OUT)
   TranslatedDateConfidenceType: ConfidenceType
   TranslatedDateConfidenceNote: String
   TranslatedDateConfidenceProbabilityValue: Float
   TranslatedDateConfidenceAssessmentAdditionalNotes: String
   TranslatedDateAdditionalNotes: String
-  TranslatedDateValue: DateValue
+  TranslatedDateValue: Date
   TranslatedDateType: DateType
   ApprenticeshipMoneyPaidBy: [OrganisationOrPerson!]!
     @relationship(type: "ApprenticeshipMoneyPaidBy", direction: OUT)
-  NewGuild: Organisation! @relationship(type: "NewGuild", direction: OUT)
+  NewGuild: Organisation @relationship(type: "NewGuild", direction: OUT)
   BoundDateConfidenceType: ConfidenceType
   BoundDateConfidenceNote: String
   BoundDateConfidenceProbabilityValue: Float
   BoundDateConfidenceAssessmentAdditionalNotes: String
   BoundDateAdditionalNotes: String
-  BoundDateValue: DateValue
+  BoundDateValue: Date
   BoundDateType: DateType
   FreedFromBoundsDateConfidenceType: ConfidenceType
   FreedFromBoundsDateConfidenceNote: String
   FreedFromBoundsDateConfidenceProbabilityValue: Float
   FreedFromBoundsDateConfidenceAssessmentAdditionalNotes: String
   FreedFromBoundsDateAdditionalNotes: String
-  FreedFromBoundsDateValue: DateValue
+  FreedFromBoundsDateValue: Date
   FreedFromBoundsDateType: DateType
   TurnedOverDateConfidenceType: ConfidenceType
   TurnedOverDateConfidenceNote: String
   TurnedOverDateConfidenceProbabilityValue: Float
   TurnedOverDateConfidenceAssessmentAdditionalNotes: String
   TurnedOverDateAdditionalNotes: String
-  TurnedOverDateValue: DateValue
+  TurnedOverDateValue: Date
   TurnedOverDateType: DateType
   FreedCategory: FreedCategory
   FreedMode: FreedMode
   ApprenticeshipAdditionalNotes: String
-  NewMaster: Person! @relationship(type: "NewMaster", direction: OUT)
-  Apprentice: Person! @relationship(type: "Apprentice", direction: OUT)
+  NewMaster: Person @relationship(type: "NewMaster", direction: OUT)
+  Apprentice: Person @relationship(type: "Apprentice", direction: OUT)
 }
 
 type Agenting {
-  Client: OrganisationOrPerson! @relationship(type: "Client", direction: OUT)
+  ResourceId: String @unique
+  Client: OrganisationOrPerson @relationship(type: "Client", direction: OUT)
   AgentforObjectsofType: [ObjectTypes!]
   AgentingStartDateConfidenceType: ConfidenceType
   AgentingStartDateConfidenceNote: String
   AgentingStartDateConfidenceProbabilityValue: Float
   AgentingStartDateConfidenceAssessmentAdditionalNotes: String
   AgentingStartDateAdditionalNotes: String
-  AgentingStartDateValue: DateValue
+  AgentingStartDateValue: Date
   AgentingStartDateType: DateType
   AgentforSpecificObjects: [Object!]!
     @relationship(type: "AgentforSpecificObjects", direction: OUT)
@@ -2908,22 +2943,23 @@ type Agenting {
   AgentingEndDateConfidenceProbabilityValue: Float
   AgentingEndDateConfidenceAssessmentAdditionalNotes: String
   AgentingEndDateAdditionalNotes: String
-  AgentingEndDateValue: DateValue
+  AgentingEndDateValue: Date
   AgentingEndDateType: DateType
-  Agent: OrganisationOrPerson! @relationship(type: "Agent", direction: OUT)
+  Agent: OrganisationOrPerson @relationship(type: "Agent", direction: OUT)
 }
 
 type Advertising {
+  ResourceId: String @unique
   AdvertisingDateConfidenceType: ConfidenceType
   AdvertisingDateConfidenceNote: String
   AdvertisingDateConfidenceProbabilityValue: Float
   AdvertisingDateConfidenceAssessmentAdditionalNotes: String
   AdvertisingDateAdditionalNotes: String
-  AdvertisingDateValue: DateValue
+  AdvertisingDateValue: Date
   AdvertisingDateType: DateType
   AdvertisedObjectsofMaterials: [MaterialTypes!]
   AdvertisedObjectsforuseinOccupations: [OccupationTypes!]
-  ProducedAdvertisement: Source!
+  ProducedAdvertisement: Source
     @relationship(type: "ProducedAdvertisement", direction: OUT)
   AdvertisedSpecificObjects: [Object!]!
     @relationship(type: "AdvertisedSpecificObjects", direction: OUT)
@@ -2936,46 +2972,13 @@ type Advertising {
 }
 
 type Address {
-  VillageTownCity: Place! @relationship(type: "VillageTownCity", direction: OUT)
+  ResourceId: String @unique
+  VillageTownCity: Place @relationship(type: "VillageTownCity", direction: OUT)
   AddressCode: String
   AddressNote: String
   GeocodingNote: String
   AreaName: String
   BuildingName: String
   StreetAddress: String
-  GeocodedPlace: Place! @relationship(type: "GeocodedPlace", direction: OUT)
-}
-
-type EventwithDateRange {
-  EventEndDateConfidenceType: ConfidenceType
-  EventEndDateConfidenceNote: String
-  EventEndDateConfidenceProbabilityValue: Float
-  EventEndDateConfidenceAssessmentAdditionalNotes: String
-  EventEndDateAdditionalNotes: String
-  EventEndDateValue: DateValue
-  EventEndDateType: DateType
-  EventStartDateConfidenceType: ConfidenceType
-  EventStartDateConfidenceNote: String
-  EventStartDateConfidenceProbabilityValue: Float
-  EventStartDateConfidenceAssessmentAdditionalNotes: String
-  EventStartDateAdditionalNotes: String
-  EventStartDateValue: DateValue
-  EventStartDateType: DateType
-}
-
-type DateValue {
-  DateAdditionalNotes: String
-  DateValue: DateValue
-  DateType: DateType
-  DateConfidenceProbabilityValue: Float
-  DateConfidenceNote: String
-  DateConfidenceType: ConfidenceType
-  DateConfidenceAssessmentAdditionalNotes: String
-}
-
-type ConfidenceAssessment {
-  ConfidenceAssessmentAdditionalNotes: String
-  ConfidenceNote: String
-  ConfidenceProbabilityValue: Float
-  ConfidenceType: ConfidenceType
+  GeocodedPlace: Place @relationship(type: "GeocodedPlace", direction: OUT)
 }
