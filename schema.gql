@@ -2379,6 +2379,8 @@ type Person {
   DeathDateType: DateType
   FriendOf: [Person!]! @relationship(type: "FriendOf", direction: OUT)
   PlaceofBaptism: Place @relationship(type: "PlaceofBaptism", direction: OUT)
+  Produced: [Producing!]! @relationship(type: "Producer", direction: IN)
+  Adverts: [Advertising!]! @relationship(type: "AdvertisedMaker", direction: IN)
   AssociatedPerson: [Person!]!
     @relationship(type: "AssociatedPerson", direction: OUT)
   RetirementDateConfidenceType: ConfidenceType
@@ -2498,6 +2500,24 @@ type Person {
   BaptismDateType: DateType
   AlternativeSurname: String
   DocumentedIn: Source @relationship(type: "DocumentedIn", direction: OUT)
+  Takeovers: [Takeover!]! @relationship(type: "TakenOverBy", direction: IN)
+  SurveysCarriedOut: [Survey!]!
+    @relationship(type: "SurveysCarriedOutBy", direction: IN)
+  RoyalAppointments: [RoyalAppointment!]!
+    @relationship(type: "RoyalAppointmentMakerAppointed", direction: IN)
+  Patents: [Patenting!]! @relationship(type: "PatentedBy", direction: IN)
+  Ownerships: [Ownership!]! @relationship(type: "Owner", direction: IN)
+  ObjectsHeld: [Object!]! @relationship(type: "HeldBy", direction: IN)
+  Memberships: [Membership!]! @relationship(type: "Member", direction: IN)
+  Marriages: [Marriage!]! @relationship(type: "Marriage", direction: IN)
+  LegalCasesSuedBy: [LegalProcess!]! @relationship(type: "Sued", direction: IN)
+  LegalCasesSuer: [LegalProcess!]! @relationship(type: "Suer", direction: IN)
+  Inventions: [Inventing!]! @relationship(type: "Inventor", direction: IN)
+  Exports: [Exporting!]! @relationship(type: "ExportedBy", direction: IN)
+  Exhibitions: [Exhibition!]!
+    @relationship(type: "ExhibitedWorkBy", direction: IN)
+  Employments: [Employment!]! @relationship(type: "Employee", direction: IN)
+  Employer: [Employment!]! @relationship(type: "Employer", direction: IN)
 }
 
 type Patenting {
